@@ -5,6 +5,12 @@ from os import listdir
 from pandas import read_csv, concat, DataFrame
 import abc
 import matplotlib.pyplot as plt
+import numpy as np
+
+
+@dataclass
+class Stats:
+    
 
 
 @dataclass
@@ -27,6 +33,11 @@ class Single(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def data_check(self, **kwargs):
+        """Save the data"""
+        pass
+
+    @abc.abstractmethod
     def data_saver(self, **kwargs):
         """Save the data"""
         pass
@@ -37,48 +48,42 @@ class Single(abc.ABC):
         pass
 
 
-# @dataclass
-# class Multiple(abc.ABC):
-#    """Class to represent multiple measurments"""
-#
-#    dir_name: str
-#    data: DataFrame = field(init=False)
-#    single_msmt: list = field(init=False)
-#
-#    def __post_init__(self):
-#        self.read_data()
-#
-#    @abc.abstractmethod
-#    def read_data(self):
-#        """Read the data from the file"""
-#        pass
-#
-#    @abc.abstractmethod
-#    def clean(self, **kwargs):
-#        """Clean the data"""
-#        pass
-#
-#    @abc.abstractmethod
-#    def plot_mean(self, **kwargs):
-#        """Plot the data"""
-#        pass
-#
-#    @abc.abstractmethod
-#    def plot_std(self, **kwargs):
-#        """Plot the data"""
-#        pass
-#
-#    @abc.abstractmethod
-#    def plot_individuals(self, **kwargs):
-#        """Plot all the data"""
-#        pass
-#
-#    @abc.abstractmethod
-#    def save_plots(self, **kwargs):
-#        """Save the plots"""
-#        pass
-#
-#
+@dataclass
+class Repeated(abc.ABC):
+    """Class to represent repeated measurments"""
+    file_dir: str
+    data: DataFrame = field(init=False)
+    single_mesurement: list = field(init=False)
+    stats: Stats() = field(init=False)
+
+    def __post_init__(self):
+        self.data_reader()
+
+    @abc.abstractmethod
+    def data_reader(self):
+        """Read the data from the file"""
+        pass
+
+    @abc.abstractmethod
+    def data_cleaner(self, **kwargs):
+        """Clean the data"""
+        pass
+
+    @abc.abstractmethod
+    def data_check(self, **kwargs):
+        """Save the data"""
+        pass
+
+    @abc.abstractmethod
+    def data_saver(self, **kwargs):
+        """Save the data"""
+        pass
+
+    @abc.abstractmethod
+    def data_plotter(self, **kwargs):
+        """Plot the data"""
+        pass
+
 # @dataclass
 # class Group:
 #    """Class to represent multiple experiments on different samples"""
@@ -87,6 +92,8 @@ class Single(abc.ABC):
 #
 #
 #
+
+
 def main():
     """Main implementation to quickly test the code"""
     pass

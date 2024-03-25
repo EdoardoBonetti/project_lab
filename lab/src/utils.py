@@ -1,9 +1,12 @@
+import scipy.stats
 import warnings
 import functools
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 from copy import deepcopy
+import abc
+from dataclasses import dataclass, field
 
 
 def deprecated(func):
@@ -45,3 +48,32 @@ def baseline_remove(df, **kwargs):
         bsline = baseline_als(df[column], **kwargs)
         df[column] = bsline
     return df
+
+
+def mean_confidence_interval(data, confidence=0.95):
+    a = 1.0 * np.array(data)
+    n = len(a)
+    m, se = np.mean(a), scipy.stats.sem(a)
+    h = se * scipy.stats.t.ppf((1 + confidence) / 2., n-1)
+    return m, m-h, m+h
+
+
+class Stats(abc.ABC):
+    """Class to represent the statistics of the data"""
+    data: DataFrame = field(init=False)
+    mean: np.array = np.array([])
+    std: np.array = np.array([])
+    min: np.array = np.array([])
+    max: np.array = np.array([])
+    median: np.array = np.array([])
+    confidence_value: float = 0.95
+    confidence_interval: np.array = np.array([])
+# """Class to represent the statistics of the data"""
+#    data = DataFrame = field(init=False)
+#    mean: np.array = np.array([])
+#    std: np.array = np.array([])
+#    min: np.array = np.array([])
+#    max: np.array = np.array([])
+#    median: np.array = np.array([])
+#    confidence_value: float = 0.95
+#    confidence_interval: np.array = np.array([][][])
