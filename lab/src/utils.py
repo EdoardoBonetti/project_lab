@@ -3,6 +3,7 @@ import functools
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
+from copy import deepcopy
 
 
 def deprecated(func):
@@ -20,7 +21,10 @@ def deprecated(func):
     return new_func
 
 
-def baseline_als(y, lam, p, niter):
+def baseline_als(y, **kwargs):
+    lam = kwargs.get("lam")
+    p = kwargs.get("p")
+    niter = kwargs.get("niter")
 
     L = len(y)
     D = sparse.diags([1, -2, 1], [0, -1, -2], shape=(L, L-2))
@@ -30,4 +34,14 @@ def baseline_als(y, lam, p, niter):
         Z = W + lam * D.dot(D.transpose())
         z = spsolve(Z, w*y)
         w = p * (y > z) + (1-p) * (y < z)
-    return z
+    # return deepcopy(z)
+    return deepcopy(z)
+
+
+def baseline_remove(df, **kwargs):
+    """Remove baseline"""
+
+    for column in df.columns:
+        bsline = baseline_als(df[column], **kwargs)
+        df[column] = bsline
+    return df
